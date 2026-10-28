@@ -1,0 +1,872 @@
+
+{% extends "base.html" %}
+
+{% block title %}Taskly — Make room for what matters{% endblock %}
+
+{% block extra_css %}
+.hero {
+    position: relative;
+    overflow: hidden;
+    padding: 92px 0 82px;
+}
+
+.hero::before {
+    content: "";
+    position: absolute;
+    width: 480px;
+    height: 480px;
+    top: -200px;
+    right: -120px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #eeebff 0%, rgba(238,235,255,0) 70%);
+    pointer-events: none;
+}
+
+.hero-grid {
+    display: grid;
+    grid-template-columns: 1fr 0.95fr;
+    align-items: center;
+    gap: 64px;
+    position: relative;
+}
+
+.eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 12px;
+    border: 1px solid #e5e0ff;
+    border-radius: 999px;
+    background: #f4f1ff;
+    color: var(--primary-dark);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+.eyebrow-dot {
+    width: 7px;
+    height: 7px;
+    background: #7a6df0;
+    border-radius: 50%;
+}
+
+.hero h1 {
+    max-width: 620px;
+    margin: 23px 0 20px;
+    font-family: "Manrope", sans-serif;
+    font-size: clamp(42px, 5vw, 66px);
+    line-height: 1.09;
+    letter-spacing: -3.2px;
+    font-weight: 800;
+}
+
+.hero h1 span {
+    color: var(--primary);
+}
+
+.hero-description {
+    max-width: 490px;
+    margin: 0;
+    color: var(--muted);
+    font-size: 17px;
+    line-height: 1.85;
+}
+
+.hero-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 30px;
+}
+
+.hero-note {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-top: 23px;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.hero-note .check {
+    color: var(--green);
+    font-weight: 800;
+}
+
+.dashboard-wrap {
+    position: relative;
+    padding: 12px;
+    border: 1px solid rgba(255,255,255,0.9);
+    border-radius: 25px;
+    background: rgba(255,255,255,0.62);
+    box-shadow: 0 30px 90px rgba(57, 44, 125, 0.14);
+    transform: rotate(1deg);
+}
+
+.dashboard {
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 17px;
+    background: white;
+}
+
+.dashboard-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 20px 22px;
+    border-bottom: 1px solid var(--border);
+}
+
+.dashboard-title {
+    font-family: "Manrope", sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+}
+
+.dashboard-date {
+    margin-top: 2px;
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.avatar {
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    background: #eeeaff;
+    color: var(--primary);
+    font-weight: 800;
+    font-size: 12px;
+}
+
+.dashboard-body {
+    padding: 20px 22px 24px;
+}
+
+.progress-card {
+    padding: 17px;
+    border-radius: 14px;
+    background: linear-gradient(120deg, #6558e8, #8277f4);
+    color: white;
+}
+
+.progress-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.progress-label {
+    font-size: 12px;
+    opacity: 0.85;
+}
+
+.progress-count {
+    margin-top: 4px;
+    font-family: "Manrope", sans-serif;
+    font-size: 24px;
+    line-height: 1.3;
+    font-weight: 800;
+}
+
+.progress-percent {
+    padding: 5px 8px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.17);
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.progress-track {
+    height: 6px;
+    overflow: hidden;
+    margin-top: 16px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.25);
+}
+
+.progress-fill {
+    width: 68%;
+    height: 100%;
+    border-radius: inherit;
+    background: white;
+}
+
+.task-section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 23px 0 12px;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.task-section-heading span:last-child {
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.task-row {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 13px 0;
+    border-bottom: 1px solid #f2f1f7;
+}
+
+.task-row:last-child {
+    border-bottom: 0;
+}
+
+.task-check {
+    flex-shrink: 0;
+    width: 19px;
+    height: 19px;
+    display: grid;
+    place-items: center;
+    border: 1.5px solid #d8d6e7;
+    border-radius: 6px;
+    color: white;
+    font-size: 11px;
+}
+
+.task-check.done {
+    border-color: var(--green);
+    background: var(--green);
+}
+
+.task-copy {
+    flex: 1;
+    min-width: 0;
+}
+
+.task-name {
+    overflow: hidden;
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.task-name.completed {
+    color: #a3a2b2;
+    text-decoration: line-through;
+}
+
+.task-meta {
+    margin-top: 3px;
+    color: var(--muted);
+    font-size: 10px;
+}
+
+.task-tag {
+    flex-shrink: 0;
+    padding: 4px 7px;
+    border-radius: 7px;
+    font-size: 9px;
+    font-weight: 700;
+}
+
+.tag-purple { background: #f0edff; color: #6b5ce7; }
+.tag-orange { background: #fff1e5; color: #c77832; }
+.tag-green { background: #e6f7ef; color: #23865f; }
+
+.floating-note {
+    position: absolute;
+    right: -22px;
+    bottom: 40px;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 13px 16px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: white;
+    box-shadow: var(--shadow);
+    transform: rotate(-2deg);
+}
+
+.floating-icon {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border-radius: 10px;
+    background: #e7f8ef;
+    color: #23865f;
+    font-weight: 800;
+}
+
+.floating-note strong {
+    display: block;
+    font-size: 12px;
+}
+
+.floating-note small {
+    display: block;
+    color: var(--muted);
+    font-size: 10px;
+}
+
+.trust-strip {
+    padding: 24px 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    background: rgba(255,255,255,0.55);
+}
+
+.trust-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 35px;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.trust-label {
+    color: #9998aa;
+}
+
+.trust-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+}
+
+.trust-item span {
+    color: var(--primary);
+    font-size: 17px;
+}
+
+.section {
+    padding: 90px 0;
+}
+
+.section-heading {
+    max-width: 620px;
+    margin: 0 auto 48px;
+    text-align: center;
+}
+
+.section-kicker {
+    color: var(--primary);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+}
+
+.section-heading h2 {
+    margin: 12px 0;
+    font-family: "Manrope", sans-serif;
+    font-size: clamp(30px, 4vw, 43px);
+    line-height: 1.2;
+    letter-spacing: -1.7px;
+}
+
+.section-heading p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 15px;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.feature-card {
+    padding: 28px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: white;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow);
+}
+
+.feature-icon {
+    width: 48px;
+    height: 48px;
+    display: grid;
+    place-items: center;
+    margin-bottom: 20px;
+    border-radius: 15px;
+    background: var(--primary-light);
+    color: var(--primary);
+    font-size: 22px;
+}
+
+.feature-card:nth-child(2) .feature-icon {
+    background: #e5f7ef;
+    color: #23865f;
+}
+
+.feature-card:nth-child(3) .feature-icon {
+    background: #fff0e3;
+    color: #c77832;
+}
+
+.feature-card h3 {
+    margin: 0 0 9px;
+    font-family: "Manrope", sans-serif;
+    font-size: 17px;
+}
+
+.feature-card p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.8;
+}
+
+.how-section {
+    background: white;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+}
+
+.steps-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 35px;
+}
+
+.step {
+    text-align: center;
+}
+
+.step-number {
+    width: 52px;
+    height: 52px;
+    display: grid;
+    place-items: center;
+    margin: 0 auto 18px;
+    border: 1px solid #e2ddff;
+    border-radius: 17px;
+    background: #f3f0ff;
+    color: var(--primary);
+    font-family: "Manrope", sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.step h3 {
+    margin: 0 0 8px;
+    font-size: 16px;
+}
+
+.step p {
+    max-width: 280px;
+    margin: 0 auto;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.cta-section {
+    padding: 80px 0 100px;
+}
+
+.cta-card {
+    position: relative;
+    overflow: hidden;
+    padding: 58px 30px;
+    border-radius: 28px;
+    background: linear-gradient(125deg, #27234f, #5144c8);
+    color: white;
+    text-align: center;
+}
+
+.cta-card::before,
+.cta-card::after {
+    content: "";
+    position: absolute;
+    width: 220px;
+    height: 220px;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.cta-card::before {
+    top: -120px;
+    left: -50px;
+}
+
+.cta-card::after {
+    right: -70px;
+    bottom: -150px;
+    width: 300px;
+    height: 300px;
+}
+
+.cta-card h2 {
+    position: relative;
+    margin: 0 0 13px;
+    font-family: "Manrope", sans-serif;
+    font-size: clamp(29px, 4vw, 43px);
+    letter-spacing: -1.5px;
+    line-height: 1.2;
+}
+
+.cta-card p {
+    position: relative;
+    max-width: 500px;
+    margin: 0 auto 25px;
+    color: rgba(255,255,255,0.76);
+    font-size: 14px;
+}
+
+.cta-card .btn {
+    position: relative;
+    color: var(--primary-dark);
+    background: white;
+}
+
+@media (max-width: 900px) {
+    .hero {
+        padding: 65px 0;
+    }
+
+    .hero-grid {
+        grid-template-columns: 1fr;
+        gap: 50px;
+    }
+
+    .hero-copy {
+        max-width: 650px;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    .hero-description {
+        margin: 0 auto;
+    }
+
+    .hero-buttons, .hero-note {
+        justify-content: center;
+    }
+
+    .dashboard-wrap {
+        width: min(100%, 540px);
+        margin: 0 auto;
+        transform: none;
+    }
+
+    .floating-note {
+        right: -8px;
+    }
+
+    .features-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .feature-card:last-child {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 600px) {
+    .hero {
+        padding: 48px 0 58px;
+    }
+
+    .hero h1 {
+        font-size: 43px;
+        letter-spacing: -2px;
+    }
+
+    .hero-description {
+        font-size: 15px;
+    }
+
+    .hero-buttons {
+        flex-direction: column;
+    }
+
+    .hero-buttons .btn {
+        width: 100%;
+    }
+
+    .dashboard-top {
+        padding: 16px;
+    }
+
+    .dashboard-body {
+        padding: 16px;
+    }
+
+    .floating-note {
+        right: -4px;
+        bottom: -20px;
+    }
+
+    .trust-inner {
+        gap: 18px;
+    }
+
+    .trust-label {
+        width: 100%;
+        text-align: center;
+    }
+
+    .section {
+        padding: 65px 0;
+    }
+
+    .section-heading {
+        margin-bottom: 32px;
+    }
+
+    .features-grid, .steps-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .feature-card:last-child {
+        grid-column: auto;
+    }
+
+    .feature-card {
+        padding: 23px;
+    }
+
+    .steps-grid {
+        gap: 32px;
+    }
+
+    .cta-section {
+        padding: 55px 0 65px;
+    }
+
+    .cta-card {
+        padding: 43px 20px;
+        border-radius: 22px;
+    }
+}
+{% endblock %}
+
+{% block content %}
+<section class="hero" id="top">
+    <div class="container hero-grid">
+        <div class="hero-copy">
+            <div class="eyebrow">
+                <span class="eyebrow-dot"></span>
+                A calmer way to get things done
+            </div>
+
+            <h1>
+                Your tasks,<br>
+                your pace.<br>
+                <span>Your progress.</span>
+            </h1>
+
+            <p class="hero-description">
+                Life gets busy. Keep your tasks organized, focus on what
+                matters, and celebrate the little wins along the way.
+            </p>
+
+
+            <div class="hero-buttons">
+                <a href="{% url 'register' %}" class="btn btn-primary">
+                    Register for free <span aria-hidden="true">→</span>
+                </a>
+            </div>
+
+
+            <div class="hero-note">
+                <span class="check">✓</span>
+                Simple to use <span>·</span> Easy to organize
+                <span>·</span> Built for everyday life
+            </div>
+        </div>
+
+        <div class="dashboard-wrap" aria-label="Illustration of a task dashboard">
+            <div class="dashboard">
+                <div class="dashboard-top">
+                    <div>
+                        <div class="dashboard-title">My workspace</div>
+                        <div class="dashboard-date">A little progress goes a long way.</div>
+                    </div>
+                    <div class="avatar">Y</div>
+                </div>
+
+                <div class="dashboard-body">
+                    <div class="progress-card">
+                        <div class="progress-head">
+                            <div>
+                                <div class="progress-label">Today's progress</div>
+                                <div class="progress-count">You've got this!</div>
+                            </div>
+                            <div class="progress-percent">68%</div>
+                        </div>
+                        <div class="progress-track">
+                            <div class="progress-fill"></div>
+                        </div>
+                    </div>
+
+                    <div class="task-section-heading">
+                        <span>Today's tasks</span>
+                        <span>3 of 5 completed</span>
+                    </div>
+
+                    <div class="task-row">
+                        <div class="task-check done">✓</div>
+                        <div class="task-copy">
+                            <div class="task-name completed">Plan the week ahead</div>
+                            <div class="task-meta">Today · 9:00 AM</div>
+                        </div>
+                        <span class="task-tag tag-green">Done</span>
+                    </div>
+
+                    <div class="task-row">
+                        <div class="task-check done">✓</div>
+                        <div class="task-copy">
+                            <div class="task-name completed">Reply to emails</div>
+                            <div class="task-meta">Today · 10:30 AM</div>
+                        </div>
+                        <span class="task-tag tag-green">Done</span>
+                    </div>
+
+                    <div class="task-row">
+                        <div class="task-check"></div>
+                        <div class="task-copy">
+                            <div class="task-name">Finish project proposal</div>
+                            <div class="task-meta">Today · 2:00 PM</div>
+                        </div>
+                        <span class="task-tag tag-orange">Important</span>
+                    </div>
+
+                    <div class="task-row">
+                        <div class="task-check"></div>
+                        <div class="task-copy">
+                            <div class="task-name">Take a well-earned break</div>
+                            <div class="task-meta">Today · Anytime</div>
+                        </div>
+                        <span class="task-tag tag-purple">Personal</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="floating-note">
+                <div class="floating-icon">✓</div>
+                <div>
+                    <strong>Nice work!</strong>
+                    <small>Every step counts.</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="trust-strip">
+    <div class="container trust-inner">
+        <span class="trust-label">Make everyday planning easier</span>
+        <span class="trust-item"><span>✓</span> Stay organized</span>
+        <span class="trust-item"><span>✦</span> Find your focus</span>
+        <span class="trust-item"><span>↗</span> Keep moving forward</span>
+    </div>
+</div>
+
+<section class="section" id="features">
+    <div class="container">
+        <div class="section-heading">
+            <div class="section-kicker">Everything in its place</div>
+            <h2>A little structure.<br>A lot more clarity.</h2>
+            <p>
+                Spend less time keeping track of everything and more time
+                doing the things that matter to you.
+            </p>
+        </div>
+
+        <div class="features-grid">
+            <article class="feature-card">
+                <div class="feature-icon">☷</div>
+                <h3>All your tasks, together</h3>
+                <p>
+                    Keep your to-dos in one place so nothing slips through
+                    the cracks. Your mind is for ideas, not reminders.
+                </p>
+            </article>
+
+            <article class="feature-card">
+                <div class="feature-icon">◎</div>
+                <h3>Focus on what matters</h3>
+                <p>
+                    Make priorities clearer, break big plans into manageable
+                    steps, and take your day one task at a time.
+                </p>
+            </article>
+
+            <article class="feature-card">
+                <div class="feature-icon">✦</div>
+                <h3>Celebrate your progress</h3>
+                <p>
+                    See what you've accomplished and build momentum through
+                    small, consistent wins.
+                </p>
+            </article>
+        </div>
+    </div>
+</section>
+
+<section class="section how-section" id="how-it-works">
+    <div class="container">
+        <div class="section-heading">
+            <div class="section-kicker">Getting started is easy</div>
+            <h2>From overwhelmed to organized.</h2>
+            <p>A simple routine can make a real difference.</p>
+        </div>
+
+        <div class="steps-grid">
+            <article class="step">
+                <div class="step-number">01</div>
+                <h3>Write it down</h3>
+                <p>Get everything out of your head and into one clear list.</p>
+            </article>
+
+            <article class="step">
+                <div class="step-number">02</div>
+                <h3>Choose your focus</h3>
+                <p>Decide what needs your attention today and what can wait.</p>
+            </article>
+
+            <article class="step">
+                <div class="step-number">03</div>
+                <h3>Make progress</h3>
+                <p>Complete tasks one by one and enjoy the feeling of moving forward.</p>
+            </article>
+        </div>
+    </div>
+</section>
+
+<section class="cta-section" id="get-started">
+    <div class="container">
+        <div class="cta-card">
+            <h2>Ready to clear your mind?</h2>
+            <p>
+                Give your tasks a home and make a little more room for
+                everything else.
+            </p>
+            <a href="{% url 'register' %}" class="btn">
+                Get started for free <span aria-hidden="true">→</span>
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

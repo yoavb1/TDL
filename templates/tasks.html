@@ -1,0 +1,205 @@
+
+{% extends "base.html" %}
+
+{% block title %}My Tasks - Taskly{% endblock %}
+
+{% block extra_css %}
+.tasks-page {
+    max-width: 850px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+}
+
+.tasks-heading {
+    margin-bottom: 28px;
+}
+
+.tasks-heading h1 {
+    margin: 0 0 8px;
+    font-size: 32px;
+    letter-spacing: -1px;
+}
+
+.tasks-heading p {
+    margin: 0;
+    color: var(--muted);
+}
+
+.task-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+}
+
+.stat-card {
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: white;
+}
+
+.stat-label {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.stat-number {
+    margin-top: 6px;
+    font-size: 26px;
+    font-weight: 700;
+}
+
+.add-task-form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 28px;
+}
+
+.add-task-form input {
+    flex: 1;
+    min-width: 0;
+    padding: 13px 15px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font: inherit;
+}
+
+.task-list {
+    padding: 8px 22px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: white;
+}
+
+.task-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 17px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.task-item:last-child {
+    border-bottom: 0;
+}
+
+.task-title {
+    flex: 1;
+    overflow-wrap: anywhere;
+}
+
+.task-title.completed {
+    color: var(--muted);
+    text-decoration: line-through;
+}
+
+.task-action {
+    padding: 5px 9px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: white;
+    cursor: pointer;
+}
+
+.delete-action {
+    color: #dc2626;
+}
+
+.empty-state {
+    padding: 35px 10px;
+    color: var(--muted);
+    text-align: center;
+}
+
+@media (max-width: 550px) {
+    .tasks-page {
+        padding: 32px 18px 60px;
+    }
+
+    .task-stats {
+        gap: 8px;
+    }
+
+    .stat-card {
+        padding: 13px;
+    }
+
+    .add-task-form {
+        flex-wrap: wrap;
+    }
+
+    .add-task-form input {
+        flex-basis: 100%;
+    }
+}
+{% endblock %}
+
+{% block content %}
+<div class="tasks-page">
+    <div class="tasks-heading">
+        <h1>My tasks</h1>
+        <p>Welcome back, {{ logged_in_user.username }}. One step at a time.</p>
+    </div>
+
+    <div class="task-stats">
+        <div class="stat-card">
+            <div class="stat-label">All tasks</div>
+            <div class="stat-number">{{ total_count }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">To do</div>
+            <div class="stat-number">{{ pending_count }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Completed</div>
+            <div class="stat-number">{{ completed_count }}</div>
+        </div>
+    </div>
+
+    <form method="post" action="{% url 'add_task' %}" class="add-task-form">
+        {% csrf_token %}
+        <input
+            type="text"
+            name="title"
+            placeholder="What needs to get done?"
+            maxlength="200"
+            required
+        >
+        <button type="submit" class="btn btn-primary">+ Add task</button>
+    </form>
+
+    <div class="task-list">
+        {% for task in tasks %}
+            <div class="task-item">
+                <form method="post" action="{% url 'toggle_task' task.id %}">
+                    {% csrf_token %}
+                    <button
+                        type="submit"
+                        class="task-action"
+                        aria-label="{% if task.completed %}Mark incomplete{% else %}Mark complete{% endif %}"
+                    >
+                        {% if task.completed %}✓{% else %}○{% endif %}
+                    </button>
+                </form>
+
+                <div class="task-title {% if task.completed %}completed{% endif %}">
+                    {{ task.title }}
+                </div>
+
+                <form method="post" action="{% url 'delete_task' task.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="task-action delete-action">
+                        Delete
+                    </button>
+                </form>
+            </div>
+        {% empty %}
+            <div class="empty-state">
+                <p>You don't have any tasks yet.</p>
+                <p>Add your first task above to get started!</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
